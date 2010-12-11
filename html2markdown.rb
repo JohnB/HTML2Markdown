@@ -56,7 +56,7 @@ class HTML2Markdown
 				@section_level -= 1
 				o
 			when /h(\d+)/
-				"\n\n" + ('#'*($1.to_i+@section_level) + ' ' + output_for_children(node)) + "\n\n"
+				"\n\n" + ('#'*($1.to_i+@section_level) + ' ' + output_for_children(node)).gsub(/^\n+/, "") + "\n\n"
 			when 'blockquote'
 				@section_level += 1
 				o = ("\n\n> #{wrap(output_for_children(node)).gsub(/\n/, "\n> ")}\n\n").gsub(/> \n(> \n)+/, "> \n")
@@ -65,14 +65,14 @@ class HTML2Markdown
 			when 'ul'
 				"\n\n" + node.children.map {|el|
 					next if el.name == 'text'
-					"* #{output_for_children(el).gsub(/^(\t)|(    )/, "\t\t").gsub(/^>/, "\t>")}\n"
+					"* #{output_for_children(el).gsub(/^\n+/, "").gsub(/^(\t)|(    )/, "\t\t").gsub(/^>/, "\t>")}\n"
 				}.join + "\n\n"
 			when 'ol'
 				i = 0
 				"\n\n" + node.children.map {|el|
 					next if el.name == 'text'
 					i += 1
-					"#{i}. #{output_for_children(el).gsub(/^(\t)|(    )/, "\t\t").gsub(/^>/, "\t>")}\n"
+					"#{i}. #{output_for_children(el).gsub(/^\n+/, "").gsub(/^(\t)|(    )/, "\t\t").gsub(/^>/, "\t>")}\n"
 				}.join + "\n\n"
 			when 'pre', 'code'
 				block = "\t" + node.content.gsub(/\n/, "\n\t")
