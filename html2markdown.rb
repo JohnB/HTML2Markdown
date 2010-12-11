@@ -89,7 +89,6 @@ class HTML2Markdown
 					if node['title']
 						link +=  ' ' + node['title']
 					end
-					puts output_for_children(node)
 					"[#{output_for_children(node).gsub("\n",' ')}](#{link})"
 				end
 			when 'img'

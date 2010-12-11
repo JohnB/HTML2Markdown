@@ -1,6 +1,7 @@
 #!/usr/bin/ruby1.9.1
 
-require './html2markdown.rb'
+libdir = File.expand_path File.dirname __FILE__
+require "#{libdir}/html2markdown.rb"
 require 'open-uri'
 
 notice     = <<NOTICE
