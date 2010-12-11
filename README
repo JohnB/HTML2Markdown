@@ -1,7 +1,8 @@
-This is just a small piece of ruby code that turns HTML into Markdown-compatible text.
+This is a fork from https://github.com/singpolyma/HTML2Markdown
 
-It is based on Nokogiri, and supports certain features of HTML5 (such as the effect sections have on headings).
+I wrote it as a wrapper to automate transformation from HTML
+to Markdown, for the ASF CMS transition.
 
 Example:
 
-	HTML2Markdown.new('<h1>test</h1>').to_s
+	./html2markdown http://trafficserver.apache.org/docs/v2/sdk/HTTP_Transactions.html

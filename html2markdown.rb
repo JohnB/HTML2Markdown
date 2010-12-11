@@ -10,6 +10,8 @@ class HTML2Markdown
 		@section_level = 0
 		@encoding = str.encoding
 		@markdown = output_for(Nokogiri::HTML(str, baseurl).root).gsub(/\n\n+/, "\n\n")
+		# Hack for converting tables to defintion lists
+		@td = 0
 	end
 
 	def to_s
@@ -24,29 +26,6 @@ class HTML2Markdown
 		node.children.map {|el|
 			output_for(el)
 		}.join
-	end
-
-	def add_link(link)
-		if @baseuri
-			begin
-				link[:href] = URI::parse(link[:href])
-			rescue Exception
-				link[:href] = URI::parse('')
-			end
-			link[:href].scheme = @baseuri.scheme unless link[:href].scheme
-			unless link[:href].opaque
-				link[:href].host = @baseuri.host unless link[:href].host
-				link[:href].path = @baseuri.path.to_s + '/' + link[:href].path.to_s if link[:href].path.to_s[0] != '/'
-			end
-			link[:href] = link[:href].to_s
-		end
-		@links.each_with_index {|l, i|
-			if l[:href] == link[:href]
-				return i+1
-			end
-		}
-		@links << link
-		@links.length
 	end
 
 	def wrap(str)
@@ -96,7 +75,7 @@ class HTML2Markdown
 					"#{i}. #{output_for_children(el).gsub(/^(\t)|(    )/, "\t\t").gsub(/^>/, "\t>")}\n"
 				}.join + "\n\n"
 			when 'pre', 'code'
-				block = "\t" + wrap(output_for_children(node)).gsub(/\n/, "\n\t")
+				block = "\t" + node.content.gsub(/\n/, "\n\t")
 				if block.count("\n") < 1
 					"`#{output_for_children(node)}`"
 				else
@@ -105,30 +84,54 @@ class HTML2Markdown
 			when 'hr'
 				"\n\n----\n\n"
 			when 'a', 'link'
-				link = {:href => node['href'], :title => node['title']}
-				"[#{output_for_children(node).gsub("\n",' ')}][#{add_link(link)}]"
+				if node['href']
+					link = node['href']
+					if node['title']
+						link +=  ' ' + node['title']
+					end
+					puts output_for_children(node)
+					"[#{output_for_children(node).gsub("\n",' ')}](#{link})"
+				end
 			when 'img'
-				link = {:href => node['src'], :title => node['title']}
-				"![#{node['alt']}][#{add_link(link)}]"
+				link = node['src']
+				if node['title']
+					link +=  ' ' + node['title']
+				end
+				"![#{node['alt']}][#{link}]"
 			when 'video', 'audio', 'embed'
-				link = {:href => node['src'], :title => node['title']}
-				"[#{output_for_children(node).gsub("\n",' ')}][#{add_link(link)}]"
+				link = node['src']
+				if node['title']
+					link +=  ' ' + node['title']
+				end
+				"[#{output_for_children(node).gsub("\n",' ')}](#{link})"
 			when 'object'
-				link = {:href => node['data'], :title => node['title']}
-				"[#{output_for_children(node).gsub("\n",' ')}][#{add_link(link)}]"
+				link = node['data']
+				if node['title']
+					link +=  ' ' + node['title']
+				end
+				"[#{output_for_children(node).gsub("\n",' ')}](#{link})"
 			when 'i', 'em', 'u'
 				"_#{output_for_children(node)}_"
 			when 'b', 'strong'
 				"**#{output_for_children(node)}**"
-			# Tables are not part of Markdown, so we output WikiCreole
+			# Tables suck, when not used as tables
+			# we convert them to defintion lists
 			when 'tr'
+				@td=0
 				node.children.select {|c|
 					c.name == 'th' || c.name == 'td'
 				}.map {|c|
 					output_for(c)
-				}.join.gsub(/\|\|/, '|') + "\n"
-			when 'th', 'td'
-				"|#{'=' if node.name == 'th'}#{output_for_children(node)}|"
+				}.join + "\n\n"
+			when 'th'
+				"**#{output_for_children(node)}** "
+			when 'td'
+				if @td == 0
+					@td += 1
+					output_for_children(node) + "\n"
+				else
+					":   " + wrap(output_for_children(node)).gsub(/\n/, "\n    ")
+				end
 			when 'text'
 				# Sometimes Nokogiri lies. Force the encoding back to what we know it is
 				if (c = node.content.force_encoding(@encoding)) =~ /\S/
