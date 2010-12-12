@@ -1,6 +1,7 @@
 #!/usr/bin/ruby1.9.1
 
-libdir = File.expand_path File.dirname __FILE__
+file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+libdir = File.expand_path File.dirname file
 require "#{libdir}/html2markdown.rb"
 require 'open-uri'
 
