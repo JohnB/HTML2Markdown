@@ -100,7 +100,7 @@ class HTML2Markdown
 				if node['title']
 					link +=  ' ' + node['title']
 				end
-				"![#{node['alt']}][#{link}]"
+				"![#{node['alt']}](#{link})"
 			when 'video', 'audio', 'embed'
 				link = node['src']
 				if node['title']
