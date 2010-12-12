@@ -56,7 +56,9 @@ class HTML2Markdown
 				@section_level -= 1
 				o
 			when /h(\d+)/
-				"\n\n" + ('#'*($1.to_i+@section_level) + ' ' + output_for_children(node)).gsub(/^\n+/, "") + "\n\n"
+				hx = '#'*($1.to_i+@section_level)
+				header = output_for_children(node).gsub(/\n+/, "")
+				"\n\n" + hx + ' ' + header + ' ' + hx + ' {#' + header.gsub(/\s/, "") + '}' + "\n\n"
 			when 'blockquote'
 				@section_level += 1
 				o = ("\n\n> #{wrap(output_for_children(node)).gsub(/\n/, "\n> ")}\n\n").gsub(/> \n(> \n)+/, "> \n")
