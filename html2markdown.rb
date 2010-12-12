@@ -57,7 +57,7 @@ class HTML2Markdown
 				o
 			when /h(\d+)/
 				hx = '#'*($1.to_i+@section_level)
-				header = output_for_children(node).gsub(/\n+/, "")
+				header = output_for_children(node).gsub(/(\n+)|(chapter\s*\d+\.)/, "")
 				anchor = header.gsub(/\s|_(the)/i, "").gsub(/traffic\s*server/i, "TS")
 				"\n\n" + hx + ' ' + header + ' ' + hx + ' {#' + anchor + '}' + "\n\n"
 			when 'blockquote'
