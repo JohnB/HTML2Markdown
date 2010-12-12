@@ -86,9 +86,10 @@ class HTML2Markdown
 			when 'a', 'link'
 				if node['href']
 					link = node['href']
-					if node['title']
-						link +=  ' ' + node['title']
-					end
+					# Titles will blow up links and that just looks gross.
+					#if node['title']
+					#	link +=  ' ' + node['title']
+					#end
 					"[#{output_for_children(node).gsub("\n",' ')}](#{link})"
 				end
 			when 'img'

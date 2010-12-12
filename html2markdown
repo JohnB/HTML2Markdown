@@ -30,7 +30,7 @@ def get_file_as_string(filename)
 			data = f.read
 		}
 	else
-		f = File.open(filename, "r") 
+		f = File.open(filename, "r")
 		f.each_line do |line|
 			data += line
 		end
@@ -40,6 +40,6 @@ end
 
 ARGV.each do |file|
 	file_contents = get_file_as_string file
-
-	puts notice, HTML2Markdown.new(file_contents).to_s
+	puts notice
+	puts HTML2Markdown.new(file_contents).to_s
 end
