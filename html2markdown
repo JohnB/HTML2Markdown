@@ -39,8 +39,9 @@ def get_file_as_string(filename)
 	return data
 end
 
+puts notice
+
 ARGV.each do |file|
 	file_contents = get_file_as_string file
-	puts notice
 	puts HTML2Markdown.new(file_contents).to_s
 end
