@@ -68,7 +68,7 @@ class HTML2Markdown
 			when 'ul'
 				"\n\n" + node.children.map {|el|
 					next if el.name == 'text'
-					"* #{output_for_children(el).gsub(/^\n+/, "").gsub(/^(\t)|(    )/, "\t\t").gsub(/^>/, "\t>")}\n"
+					"- #{output_for_children(el).gsub(/^\n+/, "").gsub(/^(\t)|(    )/, "\t\t").gsub(/^>/, "\t>")}\n"
 				}.join + "\n\n"
 			when 'ol'
 				i = 0
@@ -89,10 +89,9 @@ class HTML2Markdown
 			when 'a', 'link'
 				if node['href']
 					link = node['href']
-					# Titles will blow up links and that just looks gross.
-					#if node['title']
-					#	link +=  ' ' + node['title']
-					#end
+					if node['title']
+						link +=  ' "' + node['title'] + '"'
+					end
 					"[#{output_for_children(node).gsub("\n",' ')}](#{link})"
 				else
 					output_for_children(node)
