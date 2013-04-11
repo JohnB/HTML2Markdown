@@ -151,3 +151,4 @@ class HTML2Markdown
 	end
 
 end
+

@@ -1,8 +1,7 @@
-This is a fork from https://github.com/singpolyma/HTML2Markdown
+This is a fork from https://github.com/Nilloc/HTML2Markdown with additional files
+from https://github.com/completelynovel/HTML2Markdown
 
-I wrote it as a wrapper to automate transformation from HTML
-to Markdown, for the ASF CMS transition.
+And both of the above are forks from https://github.com/singpolyma/HTML2Markdown
 
-Example:
+The reason for the new fork was to gemify the Nilloc version.
 
-	./html2markdown http://trafficserver.apache.org/docs/v2/sdk/HTTP_Transactions.html
